@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="scabio-dp-1.0.0-jar-with-dependencies">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../BIM-dplib/lib/scabio-dp-1.0.0-jar-with-dependencies.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
