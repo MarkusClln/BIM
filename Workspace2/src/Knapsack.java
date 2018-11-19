@@ -15,10 +15,10 @@ import java.util.List;
 public class Knapsack extends DynProJava<Integer> {
 
   public static void main(String[] args) {
-    String[] rowLabels = {"A", "B", "C", "D"};
-    int[] weights = {2, 2, 6, 5};
-    int[] values = {6, 3, 5, 4};
-    Knapsack dp = new Knapsack(rowLabels, weights, values, 10);
+    String[] rowLabels = {"1","3","5","6","9"};
+    int[] fragments  = {1,3,5,6,9};
+    int total_length = 58;
+    Knapsack dp = new Knapsack(rowLabels, fragments , total_length);
     // The maximum is expected at the last item (n-1)
     // with no capacity left (0);
     List<PathEntry<Integer>> solutionJava =
@@ -32,16 +32,13 @@ public class Knapsack extends DynProJava<Integer> {
   }
 
   private String[] items;
-  private int[] weights;
-  private int[] values;
-  private int capacity;
+  private int[] fragments ;
+  private int total_length ;
 
-  public Knapsack(String[] items, int[] weights, int[] values,
-                  int capacity) {
+  public Knapsack(String[] items, int[] fragments , int total_length) {
     this.items = items;
-    this.weights = weights;
-    this.values = values;
-    this.capacity = capacity;
+    this.fragments  = fragments ;
+    this.total_length = total_length;
     // Defines how values are formatted in the console output.
     // Formatter are: INT, ENGINEER, DECIMAL
     this.formatter_$eq(this.INT());
@@ -49,17 +46,18 @@ public class Knapsack extends DynProJava<Integer> {
 
   @Override
   public int n() {
-    return weights.length;
+    return fragments.length;
   }
 
   @Override
   public int m() {
-    return capacity + 1;
+    return total_length + 1;
   }
 
   @Override
   public double value(Idx idx, Integer d) {
-    return d * values[idx.i()];
+    //System.out.println("i: "+idx.i()+" j: "+idx.j()+" d: "+d);
+    return d;
   }
 
   /**
@@ -69,8 +67,10 @@ public class Knapsack extends DynProJava<Integer> {
    */
   @Override
   public Integer[] decisions(Idx idx) {
-    if (idx.j() + weights[idx.i()] <= capacity) {
-      return new Integer[]{0, 1};
+    if (idx.j() + fragments [idx.i()] <= total_length) {
+      int x = (total_length - idx.j())/fragments[idx.i()];
+      //System.out.println("fragments: "+ fragments[idx.i()]+" x: "+x);
+      return new Integer[]{x};
     } else {
       return new Integer[]{0};
     }
@@ -84,7 +84,8 @@ public class Knapsack extends DynProJava<Integer> {
   @Override
   public Idx[] prevStates(Idx idx, Integer d) {
     if (idx.i() > 0) {
-      Idx pidx = new Idx(idx.i() - 1, idx.j() + d * weights[idx.i()]);
+      Idx pidx = new Idx(idx.i() - 1, idx.j() + d * fragments [idx.i()]);
+      //System.out.println("pidx: "+pidx+" idx: "+idx+" d: "+d);
       return new Idx[]{pidx};
     } else {
       return new Idx[]{};
@@ -98,7 +99,7 @@ public class Knapsack extends DynProJava<Integer> {
    */
   @Override
   public Function2 extremeFunction() {
-    return this.MAX(); // oder MIN()
+    return this.MIN(); // oder MIN()
   }
 
   /**
@@ -119,8 +120,8 @@ public class Knapsack extends DynProJava<Integer> {
    */
   @Override
   public Option<String[]> columnLabels() {
-    String[] cArray = new String[capacity + 1];
-    for (int i = 0; i <= capacity; i++) {
+    String[] cArray = new String[total_length + 1];
+    for (int i = 0; i <= total_length; i++) {
       cArray[i] = "" + i;
     }
     return new Some(cArray);
